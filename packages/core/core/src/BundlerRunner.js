@@ -1,12 +1,7 @@
 // @flow strict-local
 
 import type {AbortSignal} from 'abortcontroller-polyfill/dist/cjs-ponyfill';
-import type {
-  Bundle as IBundle,
-  Namer,
-  FilePath,
-  ConfigOutput,
-} from '@parcel/types';
+import type {Bundle as IBundle, Namer, ConfigOutput} from '@parcel/types';
 import type WorkerFarm, {SharedReference} from '@parcel/workers';
 import type ParcelConfig from './ParcelConfig';
 import type RequestTracker from './RequestTracker';
@@ -30,6 +25,7 @@ import applyRuntimes from './applyRuntimes';
 import {PARCEL_VERSION} from './constants';
 import {assertSignalNotAborted} from './utils';
 import {deserialize, serialize} from './serializer';
+import {type ProjectPath, joinProjectPath} from './projectPath';
 
 type Opts = {|
   options: ParcelOptions,
@@ -214,7 +210,7 @@ export default class BundlerRunner {
       name: string,
       version: string,
       plugin: Namer,
-      resolveFrom: FilePath,
+      resolveFrom: ProjectPath,
       keyPath: string,
     |}>,
     internalBundle: InternalBundle,
@@ -244,7 +240,7 @@ export default class BundlerRunner {
           }
 
           let target = nullthrows(internalBundle.target);
-          internalBundle.filePath = path.join(
+          internalBundle.filePath = joinProjectPath(
             target.distDir,
             normalizeSeparators(name),
           );
